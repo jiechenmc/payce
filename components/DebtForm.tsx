@@ -17,24 +17,27 @@ import {
 import { Input } from "@/components/ui/input"
 import { DebtRecord } from "@/app/types"
 import { Dispatch, SetStateAction, useEffect } from "react"
+import { Calculator } from "lucide-react"
 
 const formSchema = z.object({
-    totalPayment: z.coerce.number(),
-    downPayment: z.coerce.number(),
-    monthlyPayment: z.coerce.number(),
-    APR: z.coerce.number(),
-    dueDate: z.coerce.number()
+    debtName: z.string().min(1, "Name cannot be empty."),
+    totalPayment: z.union([z.coerce.number(), z.string()]),
+    downPayment: z.union([z.coerce.number(), z.string()]),
+    monthlyPayment: z.union([z.coerce.number(), z.string()]),
+    APR: z.union([z.coerce.number(), z.string()]),
+    dueDate: z.union([z.coerce.number(), z.string()]),
 })
 
-export function ProfileForm({ setRecords }: { setRecords: Dispatch<SetStateAction<DebtRecord[]>> }) {
+export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<DebtRecord[]>> }) {
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            totalPayment: NaN,
-            downPayment: NaN,
-            monthlyPayment: NaN,
-            APR: NaN,
+            debtName: "",
+            totalPayment: "",
+            downPayment: "",
+            monthlyPayment: "",
+            APR: "",
             dueDate: 0
         },
     })
@@ -45,15 +48,31 @@ export function ProfileForm({ setRecords }: { setRecords: Dispatch<SetStateActio
         // ✅ This will be type-safe and validated.
         setRecords((prev: DebtRecord[]) => [...prev, values])
 
+        console.log(values)
+
+        form.reset()
+        form.setFocus("debtName")
     }
 
-    useEffect(() => {
-        form.reset()
-        console.log(form)
-    }, [form.formState.isSubmitSuccessful])
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 grid grid-cols-5 gap-4">
+            <FormField
+                    control={form.control}
+                    name="debtName"
+                    render={({ field }) => (
+                        < FormItem className="mt-8">
+                            <FormLabel>Name</FormLabel>
+                            <FormControl>
+                                <Input  {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                Label for the Pie Chart.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={form.control}
                     name="totalPayment"
@@ -64,7 +83,7 @@ export function ProfileForm({ setRecords }: { setRecords: Dispatch<SetStateActio
                                 <Input placeholder="$"  {...field} type="number" />
                             </FormControl>
                             <FormDescription>
-                                This is your public display name.
+                                Principal in $USD.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
@@ -77,10 +96,10 @@ export function ProfileForm({ setRecords }: { setRecords: Dispatch<SetStateActio
                         < FormItem >
                             <FormLabel>Down Payment</FormLabel>
                             <FormControl>
-                                <Input {...field} type="number" />
+                                <Input placeholder="$"  {...field} type="number" />
                             </FormControl>
                             <FormDescription>
-                                This is how much you already paid.
+                                Paid in $USD.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
@@ -93,10 +112,10 @@ export function ProfileForm({ setRecords }: { setRecords: Dispatch<SetStateActio
                         <FormItem>
                             <FormLabel>Monthly Payment</FormLabel>
                             <FormControl>
-                                <Input {...field} type="number" />
+                                <Input placeholder="$"  {...field} type="number" />
                             </FormControl>
                             <FormDescription>
-                                This is your minimum payment.
+                                $USD.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
@@ -109,17 +128,19 @@ export function ProfileForm({ setRecords }: { setRecords: Dispatch<SetStateActio
                         <FormItem>
                             <FormLabel>Interest Rate</FormLabel>
                             <FormControl>
-                                <Input {...field} type="number" />
+                                <Input placeholder="%" {...field} type="number" />
                             </FormControl>
                             <FormDescription>
-                                This is your APR expressed as a percentage. If your APR is 3.49%, please input 3.49.
+                                APR 
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
-                <Button type="reset">Reset</Button>
+            <Button variant="outline" type="submit">
+                    <Calculator></Calculator>
+                    Calculate
+                </Button>
             </form>
         </Form >
     )

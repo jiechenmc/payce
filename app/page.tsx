@@ -1,8 +1,7 @@
 "use client"
-import { AvatarComponent } from "@/components/ui/Avatar";
+import { AvatarComponent } from "@/components/ui/AvatarComponent";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { PieChartComponent } from "@/components/ui/PieChart";
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -13,16 +12,15 @@ import {
 } from "@/components/ui/card"
 
 import type { DebtRecord } from "./types";
-import { Calculator } from "lucide-react";
-import { useEffect, useState } from "react";
-import { ProfileForm } from "@/components/DebtForm";
+import {  useState } from "react";
+import { DebtForm } from "@/components/DebtForm";
 import TableRow from "@/components/ui/TableRow";
 
 export default function Home() {
   const [records, setRecords] = useState<DebtRecord[]>([])
 
   return (
-    <div className="items-center justify-items-center min-h-screen min-w-screen font-[family-name:var(--font-geist-sans)] px-[20vw]">
+    <div className="min-h-screen min-w-screen font-[family-name:var(--font-geist-sans)] px-[20vw]">
       <div className="flex justify-between w-full p-4">
         <ModeToggle />
         <AvatarComponent />
@@ -34,16 +32,12 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {[...records].map(record => <TableRow key={crypto.randomUUID()} record={record} />)}
-          <ProfileForm setRecords={setRecords} />
+          <DebtForm setRecords={setRecords} />
         </CardContent>
         <CardFooter>
-          <Button variant="outline">
-            <Calculator></Calculator>
-            Calculate
-          </Button>
         </CardFooter>
       </Card>
+      {[...records].map(record => <TableRow key={crypto.randomUUID()} record={record} />)}
       <PieChartComponent />
     </div>
   );
