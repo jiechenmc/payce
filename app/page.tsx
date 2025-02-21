@@ -1,3 +1,4 @@
+"use client"
 import { AvatarComponent } from "@/components/ui/Avatar";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { PieChartComponent } from "@/components/ui/PieChart";
@@ -13,7 +14,13 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import type { DebtRecord } from "./types";
+import { Calculator } from "lucide-react";
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  const [records, setRecords] = useState<DebtRecord[]>([])
+
   return (
     <div className="items-center justify-items-center min-h-screen min-w-screen font-[family-name:var(--font-geist-sans)] px-[20vw]">
       <div className="flex justify-between w-full p-4">
@@ -27,13 +34,17 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <TableRow />
+          {[...records].map(record => <TableRow key={record.id} record={record} setRecords={setRecords} />)}
+          <TableRow setRecords={setRecords} />
         </CardContent>
         <CardFooter>
-          <Button variant="outline">Button</Button>
+          <Button variant="outline">
+            <Calculator></Calculator>
+            Calculate
+          </Button>
         </CardFooter>
-        <PieChartComponent />
       </Card>
+      <PieChartComponent />
     </div>
   );
 }
