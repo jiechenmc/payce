@@ -2,8 +2,6 @@
 import { AvatarComponent } from "@/components/ui/Avatar";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { PieChartComponent } from "@/components/ui/PieChart";
-import TableInput from "@/components/ui/TableInput";
-import TableRow from "@/components/ui/TableRow";
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -17,6 +15,8 @@ import {
 import type { DebtRecord } from "./types";
 import { Calculator } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ProfileForm } from "@/components/DebtForm";
+import TableRow from "@/components/ui/TableRow";
 
 export default function Home() {
   const [records, setRecords] = useState<DebtRecord[]>([])
@@ -34,8 +34,8 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {[...records].map(record => <TableRow key={record.id} record={record} setRecords={setRecords} />)}
-          <TableRow setRecords={setRecords} />
+          {[...records].map(record => <TableRow key={crypto.randomUUID()} record={record} />)}
+          <ProfileForm setRecords={setRecords} />
         </CardContent>
         <CardFooter>
           <Button variant="outline">
