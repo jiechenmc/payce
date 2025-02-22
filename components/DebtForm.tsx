@@ -46,7 +46,7 @@ export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<D
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        setRecords((prev: DebtRecord[]) => [...prev, values])
+        setRecords((prev: DebtRecord[]) => [...prev, values as DebtRecord])
 
         console.log(values)
 
@@ -57,7 +57,7 @@ export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<D
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 grid grid-cols-5 gap-4">
-            <FormField
+                <FormField
                     control={form.control}
                     name="debtName"
                     render={({ field }) => (
@@ -131,13 +131,13 @@ export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<D
                                 <Input placeholder="%" {...field} type="number" />
                             </FormControl>
                             <FormDescription>
-                                APR 
+                                APR
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-            <Button variant="outline" type="submit">
+                <Button variant="outline" type="submit">
                     <Calculator></Calculator>
                     Calculate
                 </Button>
