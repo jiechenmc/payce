@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -18,12 +18,12 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { month: "January", desktop: 0, mobile: 0 },
+  { month: "February", desktop: 10, mobile: 10 },
+  { month: "March", desktop: 40, mobile: 20 },
+  { month: "April", desktop: 60, mobile: 20 },
+  { month: "May", desktop: 80, mobile: 60 },
+  { month: "June", desktop: 100, mobile: 100 },
 ]
 
 const chartConfig = {
@@ -37,20 +37,22 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function LineChartComponent() {
+export function AreaChartComponent() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Area Chart - Axes</CardTitle>
+        <CardDescription>
+          Showing total visitors for the last 6 months
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <LineChart
+          <AreaChart
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
+              left: -20,
               right: 12,
             }}
           >
@@ -62,22 +64,30 @@ export function LineChartComponent() {
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickCount={3}
+            />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Line
-              dataKey="desktop"
-              type="monotone"
-              stroke="var(--color-desktop)"
-              strokeWidth={2}
-              dot={false}
-            />
-            <Line
+            <Area
               dataKey="mobile"
-              type="monotone"
+              type="natural"
+              fill="var(--color-mobile)"
+              fillOpacity={0.4}
               stroke="var(--color-mobile)"
-              strokeWidth={2}
-              dot={false}
+              stackId="a"
             />
-          </LineChart>
+            <Area
+              dataKey="desktop"
+              type="natural"
+              fill="var(--color-desktop)"
+              fillOpacity={0.4}
+              stroke="var(--color-desktop)"
+              stackId="a"
+            />
+          </AreaChart>
         </ChartContainer>
       </CardContent>
       <CardFooter>
@@ -87,7 +97,7 @@ export function LineChartComponent() {
               Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
             </div>
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              Showing total visitors for the last 6 months
+              January - June 2024
             </div>
           </div>
         </div>
