@@ -15,7 +15,7 @@ import type { DebtRecord } from "./types";
 import {  useState } from "react";
 import { DebtForm } from "@/components/DebtForm";
 import TableRow from "@/components/ui/TableRow";
-import { AreaChartComponent } from "@/components/AreaChart";
+import { PaymentChartComponent } from "@/components/PaymentChart";
 
 export default function Home() {
   const [records, setRecords] = useState<DebtRecord[]>([])
@@ -40,7 +40,7 @@ export default function Home() {
       </Card>
       {[...records].map(record => <TableRow key={crypto.randomUUID()} record={record} />)}
       <PieChartComponent />
-      <AreaChartComponent />
+      <PaymentChartComponent />
     </div>
   );
 }

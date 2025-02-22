@@ -1,7 +1,7 @@
 "use client"
 
 import { TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import {
   Card,
@@ -18,12 +18,12 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 const chartData = [
-  { month: "January", desktop: 0, mobile: 0 },
-  { month: "February", desktop: 10, mobile: 10 },
-  { month: "March", desktop: 40, mobile: 20 },
-  { month: "April", desktop: 60, mobile: 20 },
-  { month: "May", desktop: 80, mobile: 60 },
-  { month: "June", desktop: 100, mobile: 100 },
+  { month: "January", desktop: 186, mobile: 100 },
+  { month: "February", desktop: 305, mobile: 100 },
+  { month: "March", desktop: 237, mobile: 100 },
+  { month: "April", desktop: 73, mobile: 100 },
+  { month: "May", desktop: 209, mobile: 100 },
+  { month: "June", desktop: 214, mobile: 100 },
 ]
 
 const chartConfig = {
@@ -37,11 +37,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function AreaChartComponent() {
+export function PaymentChartComponent() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Axes</CardTitle>
+        <CardTitle>Area Chart - Gradient</CardTitle>
         <CardDescription>
           Showing total visitors for the last 6 months
         </CardDescription>
@@ -52,7 +52,7 @@ export function AreaChartComponent() {
             accessibilityLayer
             data={chartData}
             margin={{
-              left: -20,
+              left: 12,
               right: 12,
             }}
           >
@@ -64,17 +64,37 @@ export function AreaChartComponent() {
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickCount={3}
-            />
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <defs>
+              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-desktop)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                <stop
+                  offset="5%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.8}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--color-mobile)"
+                  stopOpacity={0.1}
+                />
+              </linearGradient>
+            </defs>
             <Area
               dataKey="mobile"
               type="natural"
-              fill="var(--color-mobile)"
+              fill="url(#fillMobile)"
               fillOpacity={0.4}
               stroke="var(--color-mobile)"
               stackId="a"
@@ -82,7 +102,7 @@ export function AreaChartComponent() {
             <Area
               dataKey="desktop"
               type="natural"
-              fill="var(--color-desktop)"
+              fill="url(#fillDesktop)"
               fillOpacity={0.4}
               stroke="var(--color-desktop)"
               stackId="a"
