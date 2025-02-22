@@ -1,7 +1,7 @@
 "use client"
 import { AvatarComponent } from "@/components/ui/AvatarComponent";
 import { ModeToggle } from "@/components/ui/ModeToggle";
-import { PieChartComponent } from "@/components/ui/PieChart";
+import { PieChartComponent } from "@/components/PieChart";
 import {
   Card,
   CardContent,
@@ -15,6 +15,7 @@ import type { DebtRecord } from "./types";
 import {  useState } from "react";
 import { DebtForm } from "@/components/DebtForm";
 import TableRow from "@/components/ui/TableRow";
+import { LineChartComponent } from "@/components/LineChart";
 
 export default function Home() {
   const [records, setRecords] = useState<DebtRecord[]>([])
@@ -39,6 +40,7 @@ export default function Home() {
       </Card>
       {[...records].map(record => <TableRow key={crypto.randomUUID()} record={record} />)}
       <PieChartComponent />
+      <LineChartComponent />
     </div>
   );
 }

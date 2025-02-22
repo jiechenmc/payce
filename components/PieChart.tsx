@@ -25,12 +25,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-const desktopData = [
-    { month: "january", desktop: 186, fill: "var(--color-january)" },
-    { month: "february", desktop: 305, fill: "var(--color-february)" },
-    { month: "march", desktop: 237, fill: "var(--color-march)" },
-    { month: "april", desktop: 173, fill: "var(--color-april)" },
-    { month: "may", desktop: 209, fill: "var(--color-may)" },
+
+
+const loanData = [
+    { name: "CreditCard", desktop: 10, fill: "var(--color-CreditCard)" },
+    { name: "Mortage", desktop: 20, fill: "var(--color-Mortage)" },
+    { name: "Loan", desktop: 70, fill: "var(--color-Loan)" },
 ]
 
 const chartConfig = {
@@ -43,52 +43,44 @@ const chartConfig = {
     mobile: {
         label: "Mobile",
     },
-    january: {
-        label: "January",
+    CreditCard: {
+        label: "Credit Card",
         color: "hsl(var(--chart-1))",
     },
-    february: {
-        label: "February",
+    Mortage: {
+        label: "Mortage",
         color: "hsl(var(--chart-2))",
     },
-    march: {
-        label: "March",
+    Loan: {
+        label: "Loan",
         color: "hsl(var(--chart-3))",
-    },
-    april: {
-        label: "April",
-        color: "hsl(var(--chart-4))",
-    },
-    may: {
-        label: "May",
-        color: "hsl(var(--chart-5))",
     },
 } satisfies ChartConfig
 
 export function PieChartComponent() {
     const id = "pie-interactive"
-    const [activeMonth, setActiveMonth] = React.useState(desktopData[0].month)
+    const [activeDebt, setActiveDebt] = React.useState(loanData[0].name)
 
     const activeIndex = React.useMemo(
-        () => desktopData.findIndex((item) => item.month === activeMonth),
-        [activeMonth]
+        () => loanData.findIndex((item) => item.name === activeDebt),
+        [activeDebt]
     )
-    const months = React.useMemo(() => desktopData.map((item) => item.month), [])
+    const months = React.useMemo(() => loanData.map((item) => item.name), [])
 
     return (
         <Card data-chart={id} className="flex flex-col">
             <ChartStyle id={id} config={chartConfig} />
             <CardHeader className="flex-row items-start space-y-0 pb-0">
                 <div className="grid gap-1">
-                    <CardTitle>Pie Chart - Interactive</CardTitle>
-                    <CardDescription>January - June 2024</CardDescription>
+                    <CardTitle>Debt - Breakdown</CardTitle>
+                    <CardDescription>$100,000 - 58% Remaining</CardDescription>
                 </div>
-                <Select value={activeMonth} onValueChange={setActiveMonth}>
+                <Select value={activeDebt} onValueChange={setActiveDebt}>
                     <SelectTrigger
                         className="ml-auto h-7 w-[130px] rounded-lg pl-2.5"
                         aria-label="Select a value"
                     >
-                        <SelectValue placeholder="Select month" />
+                        <SelectValue placeholder="Select name" />
                     </SelectTrigger>
                     <SelectContent align="end" className="rounded-xl">
                         {months.map((key) => {
@@ -131,9 +123,9 @@ export function PieChartComponent() {
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Pie
-                            data={desktopData}
+                            data={loanData}
                             dataKey="desktop"
-                            nameKey="month"
+                            nameKey="name"
                             innerRadius={60}
                             strokeWidth={5}
                             activeIndex={activeIndex}
@@ -166,14 +158,14 @@ export function PieChartComponent() {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {desktopData[activeIndex].desktop.toLocaleString()}
+                                                    {loanData[activeIndex].desktop.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    Visitors
+                                                    % of Debt
                                                 </tspan>
                                             </text>
                                         )
