@@ -1,6 +1,6 @@
 "use client"
-import { AvatarComponent } from "@/components/ui/AvatarComponent";
-import { ModeToggle } from "@/components/ui/ModeToggle";
+import { AvatarComponent } from "@/components/AvatarComponent";
+import { ModeToggle } from "@/components/ModeToggle";
 import { PieChartComponent } from "@/components/PieChart";
 import {
   Card,
@@ -12,13 +12,14 @@ import {
 } from "@/components/ui/card"
 
 import type { DebtRecord } from "./types";
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { DebtForm } from "@/components/DebtForm";
-import TableRow from "@/components/ui/TableRow";
+import TableRow from "@/components/TableRow";
 import { PaymentChartComponent } from "@/components/PaymentChart";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 export default function Home() {
-  const [records, setRecords] = useState<DebtRecord[]>([])
+  const [records, setRecords] = useLocalStorage<DebtRecord[]>("debt", [])
 
   return (
     <div className="min-h-screen min-w-screen font-[family-name:var(--font-geist-sans)] px-[20vw]">
@@ -39,8 +40,8 @@ export default function Home() {
         </CardFooter>
       </Card>
       {[...records].map(record => <TableRow key={crypto.randomUUID()} record={record} />)}
-      <PieChartComponent />
-      <PaymentChartComponent />
+      <PieChartComponent debtData={records} />
+      <PaymentChartComponent debtData={records} />
     </div>
   );
 }

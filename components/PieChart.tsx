@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Label, Pie, PieChart, Sector } from "recharts"
 import { PieSectorDataItem } from "recharts/types/polar/Pie"
-
 import {
     Card,
     CardContent,
@@ -25,47 +24,61 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { DebtRecord } from "@/app/types"
+import { getRandomColor } from "@/hooks/helper"
 
 
-const loanData = [
-    { name: "CreditCard", desktop: 10, fill: "var(--color-CreditCard)" },
-    { name: "Mortage", desktop: 20, fill: "var(--color-Mortage)" },
-    { name: "Loan", desktop: 70, fill: "var(--color-Loan)" },
-]
+const chartConfig = {} satisfies ChartConfig
 
-const chartConfig = {
-    visitors: {
-        label: "Visitors",
-    },
-    desktop: {
-        label: "Desktop",
-    },
-    mobile: {
-        label: "Mobile",
-    },
-    CreditCard: {
-        label: "Credit Card",
-        color: "hsl(var(--chart-1))",
-    },
-    Mortage: {
-        label: "Mortage",
-        color: "hsl(var(--chart-2))",
-    },
-    Loan: {
-        label: "Loan",
-        color: "hsl(var(--chart-3))",
-    },
-} satisfies ChartConfig
 
-export function PieChartComponent() {
+interface PieDataPoints {
+    name: string
+    percentage: number
+    fill: string
+}
+
+export function PieChartComponent({ debtData }: { debtData: DebtRecord[] }) {
+
+    const [debtSum, setDebtSum] = React.useState(0)
+    const [debtRemainPercent, setDebtRemainPercent] = React.useState(0)
+    const [chartData, setChartData] = React.useState<PieDataPoints[]>([])
+    const [activeDebt, setActiveDebt] = React.useState("")
+
+    React.useEffect(() => {
+        let sum = 0
+        let credit = 0
+
+        for (const debt of debtData) {
+            sum += debt.totalPayment
+            credit += debt.downPayment
+        }
+
+        setDebtSum(sum)
+        setDebtRemainPercent(Math.floor(((sum - credit) / sum) * 100))
+
+        let buffer = []
+
+        for (const [i, debt] of debtData.entries()) {
+            buffer.push({ "name": debt.debtName, percentage: Math.floor((debt.totalPayment / sum) * 100), fill: getRandomColor(i) })
+        }
+
+        buffer.sort((a, b) => {
+            return b.percentage - a.percentage
+        })
+
+        setChartData(buffer)
+        setActiveDebt(buffer[0]?.name)
+
+    }, [debtData])
+
     const id = "pie-interactive"
-    const [activeDebt, setActiveDebt] = React.useState(loanData[0].name)
 
     const activeIndex = React.useMemo(
-        () => loanData.findIndex((item) => item.name === activeDebt),
-        [activeDebt]
+        () => chartData.findIndex((item) => item.name === activeDebt),
+        [activeDebt, chartData]
     )
-    const months = React.useMemo(() => loanData.map((item) => item.name), [])
+
+    const months = React.useMemo(() => chartData.map((item) => item.name), [chartData])
 
     return (
         <Card data-chart={id} className="flex flex-col">
@@ -73,7 +86,7 @@ export function PieChartComponent() {
             <CardHeader className="flex-row items-start space-y-0 pb-0">
                 <div className="grid gap-1">
                     <CardTitle>Debt - Breakdown</CardTitle>
-                    <CardDescription>$100,000 - 58% Remaining</CardDescription>
+                    <CardDescription>${debtSum} - {debtRemainPercent}% Remaining</CardDescription>
                 </div>
                 <Select value={activeDebt} onValueChange={setActiveDebt}>
                     <SelectTrigger
@@ -84,12 +97,6 @@ export function PieChartComponent() {
                     </SelectTrigger>
                     <SelectContent align="end" className="rounded-xl">
                         {months.map((key) => {
-                            const config = chartConfig[key as keyof typeof chartConfig]
-
-                            if (!config) {
-                                return null
-                            }
-
                             return (
                                 <SelectItem
                                     key={key}
@@ -100,10 +107,10 @@ export function PieChartComponent() {
                                         <span
                                             className="flex h-3 w-3 shrink-0 rounded-sm"
                                             style={{
-                                                backgroundColor: `var(--color-${key})`,
+                                                backgroundColor: chartData.filter(d => d.name === key)[0].fill,
                                             }}
                                         />
-                                        {config?.label}
+                                        {key}
                                     </div>
                                 </SelectItem>
                             )
@@ -123,8 +130,8 @@ export function PieChartComponent() {
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Pie
-                            data={loanData}
-                            dataKey="desktop"
+                            data={chartData}
+                            dataKey="percentage"
                             nameKey="name"
                             innerRadius={60}
                             strokeWidth={5}
@@ -158,7 +165,7 @@ export function PieChartComponent() {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {loanData[activeIndex].desktop.toLocaleString()}
+                                                    {chartData[activeIndex].percentage.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}

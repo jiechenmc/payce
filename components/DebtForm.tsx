@@ -28,7 +28,7 @@ const formSchema = z.object({
     dueDate: z.union([z.coerce.number(), z.string()]),
 })
 
-export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<DebtRecord[]>> }) {
+export function DebtForm({ setRecords }: { setRecords: any }) {
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,9 +46,8 @@ export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<D
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        setRecords((prev: DebtRecord[]) => [...prev, values as DebtRecord])
+        setRecords((prev: DebtRecord[]) => [...prev, { ...values, remain: (values.totalPayment - values.downPayment) }])
 
-        console.log(values)
 
         form.reset()
         form.setFocus("debtName")
@@ -78,7 +77,7 @@ export function DebtForm({ setRecords }: { setRecords: Dispatch<SetStateAction<D
                     name="totalPayment"
                     render={({ field }) => (
                         < FormItem >
-                            <FormLabel>Total Payment</FormLabel>
+                            <FormLabel>Principal</FormLabel>
                             <FormControl>
                                 <Input placeholder="$"  {...field} type="number" />
                             </FormControl>
