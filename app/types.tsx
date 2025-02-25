@@ -10,9 +10,10 @@ export interface DebtRecord {
 }
 
 export interface PaymentPlanDataPoint {
-    month: string,
+    month: string | number,
     plan1: number
     plan2: number
+    plan3: number
 }
 
 export interface LinePlotChartData {

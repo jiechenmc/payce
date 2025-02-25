@@ -17,9 +17,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { DebtRecord, LinePlotChartData } from "@/app/types"
+import { DebtRecord, LinePlotChartData, PaymentPlanDataPoint } from "@/app/types"
 import { useEffect, useState } from "react"
-import { payHighestAPRFirst } from "@/hooks/helper"
+import { monthlyPayment, payHighestAPRFirst } from "@/hooks/helper"
 
 
 const chartConfig = {} satisfies ChartConfig
@@ -28,11 +28,30 @@ const chartConfig = {} satisfies ChartConfig
 
 export function PaymentChartComponent({ debtData }: { debtData: DebtRecord[] }) {
 
-  const [chartData, setChartData] = useState<LinePlotChartData[]>([])
+  const [chartData, setChartData] = useState<PaymentPlanDataPoint[]>([])
 
   useEffect(() => {
-    setChartData(payHighestAPRFirst(debtData))
-    console.log(debtData)
+    if (debtData) {
+      const { payments: hpayments, total: htotal, interest: hinterest } = payHighestAPRFirst(debtData)
+      const { payments: lpayments, total: ltotal, interest: linterest } = payHighestAPRFirst(debtData, true)
+      const { payments, total, interest } = monthlyPayment(debtData)
+
+      const maxMonths = Math.max(
+        hpayments.length,
+        lpayments.length,
+        payments.length
+      );
+
+
+      const mergedPayments = Array.from({ length: maxMonths }, (_, month) => ({
+        month,
+        plan1: hpayments[month]?.amountPaid || NaN,
+        plan2: lpayments[month]?.amountPaid || NaN,
+        plan3: payments[month]?.amountPaid || NaN
+      }));
+
+      setChartData(mergedPayments)
+    }
   }, [debtData])
 
   return (
@@ -77,12 +96,28 @@ export function PaymentChartComponent({ debtData }: { debtData: DebtRecord[] }) 
               </linearGradient>
             </defs>
             <Area
-              dataKey="amountPaid"
+              dataKey="plan1"
               type="natural"
-              fill="url(#fillDesktop)"
+              fill="hsl(var(--chart-1))"
               fillOpacity={0.4}
               stroke="hsl(var(--chart-1))"
               stackId="a"
+            />
+            <Area
+              dataKey="plan2"
+              type="natural"
+              fill="hsl(var(--chart-2))"
+              fillOpacity={0.4}
+              stroke="hsl(var(--chart-2))"
+              stackId="b"
+            />
+            <Area
+              dataKey="plan3"
+              type="natural"
+              fill="hsl(var(--chart-3))"
+              fillOpacity={0.4}
+              stroke="hsl(var(--chart-3))"
+              stackId="c"
             />
           </AreaChart>
         </ChartContainer>
